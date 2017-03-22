@@ -1,18 +1,26 @@
-package com.cti.repository;
+package com.cti.repository.impl;
 
 
+import com.cti.repository.PrintJobsRepository;
+import com.cti.repository.RepositoryException;
 import com.cti.repository.model.PrintJob;
 import com.cti.repository.model.PrintType;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static java.lang.String.format;
 
 @Repository
 public class PrintJobsRepositoryImpl implements PrintJobsRepository {
@@ -28,8 +36,18 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
     @Transactional
     public void save(List<PrintJob> jobs) {
         for (PrintJob job : jobs) {
-            em.persist(job);
+            try {
+                em.persist(job);
+            } catch (PersistenceException e) {
+                if (e.getCause() instanceof ConstraintViolationException) {
+                    if (((ConstraintViolationException) e.getCause()).getConstraintName().contains("JOB_AND_DEVICE_CONSTRAINT")) {
+                        throw new PersistenceException(format("Job with jobId=%s and device=%s already exists", job.getJobId(), job.getDevice()));
+                    }
+                }
+                throw new RepositoryException("Database error!");
+            }
         }
+
     }
 
     @Override
@@ -52,22 +70,25 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
         CriteriaQuery<PrintJob> q = cb.createQuery(PrintJob.class);
         Root<PrintJob> root = q.from(PrintJob.class);
 
-
+        List<Predicate> filters = new ArrayList<>();
         if (user != null) {
-            q.where(cb.equal(root.get("user"), user));
+            filters.add(cb.equal(root.get("user"), user));
         }
         if (type != null) {
-            q.where(cb.equal(root.get("type"), type));
+            filters.add(cb.equal(root.get("type"), type));
         }
         if (device != null) {
-            q.where(cb.equal(root.get("device"), device));
+            filters.add(cb.equal(root.get("device"), device));
         }
         if (timeFrom != null) {
-            q.where(cb.greaterThan(root.get("timeFrom"), timeFrom));
+            filters.add(cb.greaterThan(root.get("time"), timeFrom.getTime()));
         }
         if (timeTo != null) {
-            q.where(cb.lessThan(root.get("timeTo"), timeTo));
+            filters.add(cb.lessThan(root.get("time"), timeTo.getTime()));
         }
+
+        q.where(filters.toArray(new Predicate[filters.size()]));
+
         return q;
     }
 

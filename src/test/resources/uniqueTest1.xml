@@ -1,8 +1,8 @@
 <jobs>
-    <job id="4">
-        <type>copy</type>
+    <job id="5">
+        <type>print</type>
         <user>user1</user>
         <device>device1</device>
-        <amount>7</amount>
+        <amount>12</amount>
     </job>
 </jobs>

@@ -9,7 +9,7 @@ import java.util.Date;
         @Index(columnList = "device"),
         @Index(columnList = "type"),
         @Index(columnList = "time")},
-        uniqueConstraints = @UniqueConstraint(columnNames = {"jobId", "device"}))
+        uniqueConstraints = @UniqueConstraint(name = "JOB_AND_DEVICE_CONSTRAINT", columnNames = {"jobId", "device"}))
 public class PrintJob {
 
     @Id

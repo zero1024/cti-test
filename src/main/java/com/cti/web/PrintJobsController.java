@@ -6,6 +6,7 @@ import com.cti.repository.model.PrintType;
 import com.cti.web.dto.PrintJobJsonResponse;
 import com.cti.web.dto.PrintJobsXmlRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+//2. меньше одной джобы 3. некорректный запрос
 @RestController
 public class PrintJobsController {
 
@@ -54,8 +56,8 @@ public class PrintJobsController {
             String user,
             PrintType type,
             String device,
-            Date timeFrom,
-            Date timeTo
+            @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm") Date timeFrom,
+            @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm") Date timeTo
     ) {
         List<PrintJob> res = printJobsRepository.find(user, type, device, timeFrom, timeTo);
 

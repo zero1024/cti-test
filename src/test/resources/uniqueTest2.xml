@@ -1,0 +1,14 @@
+<jobs>
+    <job id="7">
+        <type>fax</type>
+        <user>user2</user>
+        <device>device2</device>
+        <amount>4</amount>
+    </job>
+    <job id="5">
+        <type>fax</type>
+        <user>user2</user>
+        <device>device1</device>
+        <amount>3</amount>
+    </job>
+</jobs>
