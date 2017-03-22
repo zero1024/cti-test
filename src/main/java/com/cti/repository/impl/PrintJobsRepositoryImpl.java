@@ -2,7 +2,7 @@ package com.cti.repository.impl;
 
 
 import com.cti.repository.PrintJobsRepository;
-import com.cti.repository.RepositoryException;
+import com.cti.repository.RepositoryConstraintException;
 import com.cti.repository.model.PrintJob;
 import com.cti.repository.model.PrintType;
 import org.hibernate.exception.ConstraintViolationException;
@@ -39,12 +39,8 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
             try {
                 em.persist(job);
             } catch (PersistenceException e) {
-                if (e.getCause() instanceof ConstraintViolationException) {
-                    if (((ConstraintViolationException) e.getCause()).getConstraintName().contains("JOB_AND_DEVICE_CONSTRAINT")) {
-                        throw new PersistenceException(format("Job with jobId=%s and device=%s already exists", job.getJobId(), job.getDevice()));
-                    }
-                }
-                throw new RepositoryException("Database error!");
+                checkForConstraintsViolations(job, e);
+                throw e;
             }
         }
 
@@ -58,6 +54,15 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
         return em.createQuery(query).getResultList();
 
     }
+
+    private static void checkForConstraintsViolations(PrintJob job, PersistenceException e) {
+        if (e.getCause() instanceof ConstraintViolationException) {
+            if (((ConstraintViolationException) e.getCause()).getConstraintName().contains("JOB_AND_DEVICE_CONSTRAINT")) {
+                throw new RepositoryConstraintException(format("Job with jobId=%s and device=%s already exists", job.getJobId(), job.getDevice()));
+            }
+        }
+    }
+
 
     private CriteriaQuery<PrintJob> createQuery(
             String user,

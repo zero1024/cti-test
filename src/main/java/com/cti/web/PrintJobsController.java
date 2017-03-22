@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -28,7 +30,7 @@ public class PrintJobsController {
     @Autowired
     private PrintJobsRepository printJobsRepository;
 
-    @RequestMapping(value = "/jobs", method = POST, consumes = "application/xml", produces = "application/json")
+    @RequestMapping(value = "/jobs", method = POST, consumes = APPLICATION_XML_VALUE, produces = APPLICATION_JSON_VALUE)
     public Map<String, Integer> jobs(@RequestBody PrintJobsXmlRequest printJobs) {
 
         Map<String, Integer> amountByUser = new HashMap<>();
@@ -51,7 +53,7 @@ public class PrintJobsController {
         return amountByUser;
     }
 
-    @RequestMapping(value = "/statistics", method = GET, produces = "application/json")
+    @RequestMapping(value = "/statistics", method = GET, produces = APPLICATION_JSON_VALUE)
     public List<PrintJobJsonResponse> statistics(
             String user,
             PrintType type,
