@@ -39,7 +39,7 @@ public class PrintJobsController {
             printJob.setDevice(dto.getDevice());
             printJob.setUser(dto.getUser());
             printJob.setType(dto.getType());
-            printJob.setTime(time);
+            printJob.setTime(time.getTime());
             amountByUser.computeIfPresent(dto.getUser(), (k, v) -> v += dto.getAmount());
             amountByUser.computeIfAbsent(dto.getUser(), k -> dto.getAmount());
 
@@ -61,7 +61,7 @@ public class PrintJobsController {
 
         return res.stream().map(job -> {
             PrintJobJsonResponse dto = new PrintJobJsonResponse();
-            dto.setTime(job.getTime());
+            dto.setTime(job.getTimeAsDate());
             dto.setType(job.getType());
             dto.setUser(job.getUser());
             dto.setDevice(job.getDevice());

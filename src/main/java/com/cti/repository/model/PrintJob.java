@@ -8,8 +8,8 @@ import java.util.Date;
         @Index(columnList = "user"),
         @Index(columnList = "device"),
         @Index(columnList = "type"),
-        @Index(columnList = "time")
-})
+        @Index(columnList = "time")},
+        uniqueConstraints = @UniqueConstraint(columnNames = {"jobId", "device"}))
 public class PrintJob {
 
     @Id
@@ -21,14 +21,14 @@ public class PrintJob {
     private String device;
     private String user;
     private PrintType type;
-    private Date time;
+    private Long time;
     private Integer amount;
 
-    public Date getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
@@ -78,5 +78,9 @@ public class PrintJob {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Date getTimeAsDate() {
+        return new Date(time);
     }
 }

@@ -2,6 +2,7 @@ package com.cti.web.dto;
 
 
 import com.cti.repository.model.PrintType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
@@ -12,6 +13,7 @@ public class PrintJobJsonResponse {
     private String user;
     private PrintType type;
     private Integer amount;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm")
     private Date time;
 
     public Integer getJobId() {
