@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-//2. меньше одной джобы 3. некорректный запрос
+//2. меньше одной джобы 3. некорректный запрос 4. логи
 @RestController
 public class PrintJobsController {
 
@@ -31,7 +32,7 @@ public class PrintJobsController {
     private PrintJobsRepository printJobsRepository;
 
     @RequestMapping(value = "/jobs", method = POST, consumes = APPLICATION_XML_VALUE, produces = APPLICATION_JSON_VALUE)
-    public Map<String, Integer> jobs(@RequestBody PrintJobsXmlRequest printJobs) {
+    public Map<String, Integer> jobs(@RequestBody @Valid PrintJobsXmlRequest printJobs) {
 
         Map<String, Integer> amountByUser = new HashMap<>();
         Date time = new Date();

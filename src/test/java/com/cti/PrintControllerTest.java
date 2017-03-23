@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.springframework.http.HttpMethod.POST;
@@ -135,6 +136,29 @@ public class PrintControllerTest {
         List<String> ids = ((List<Map<String, Object>>) res2.getBody()).stream().map(o -> o.get("jobId").toString())
                 .distinct().collect(Collectors.toList());
         assert !ids.contains("7");
+    }
+
+    @Test
+    public void badRequestTest() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        ResponseEntity<Map> res1 = restTemplate.exchange("/jobs", POST,
+                new HttpEntity<>(content("badRequestTest1.xml"), headers),
+                Map.class);
+        assert res1.getStatusCodeValue() == 400;
+        assert res1.getBody().get("messages").equals(singletonList("Require at least one job!"));
+
+
+        res1 = restTemplate.exchange("/jobs", POST,
+                new HttpEntity<>(content("badRequestTest2.xml"), headers),
+                Map.class);
+        assert res1.getStatusCodeValue() == 400;
+        assert res1.getBody().get("messages").equals(asList("Type is required!", "User is required!"));
+
+        res1 = restTemplate.exchange("/jobs", POST,
+                new HttpEntity<>(content("badRequestTest3.xml"), headers),
+                Map.class);
+        assert res1.getStatusCodeValue() == 400;
     }
 
     //удаляем секунды

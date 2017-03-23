@@ -16,12 +16,17 @@ public class PrintJob {
     @GeneratedValue
     private Integer id;
 
+    @Column(nullable = false)
     private Integer jobId;
-
+    @Column(nullable = false)
     private String device;
+    @Column(nullable = false)
     private String user;
+    @Column(nullable = false)
     private PrintType type;
+    @Column(nullable = false)
     private Long time;
+    @Column(nullable = false)
     private Integer amount;
 
     public Long getTime() {

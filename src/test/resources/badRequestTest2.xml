@@ -1,0 +1,6 @@
+<jobs>
+    <job id="1">
+        <device>device1</device>
+        <amount>10</amount>
+    </job>
+</jobs>

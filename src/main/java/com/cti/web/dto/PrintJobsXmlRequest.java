@@ -2,6 +2,9 @@ package com.cti.web.dto;
 
 import com.cti.repository.model.PrintType;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
@@ -11,31 +14,38 @@ import java.util.List;
 @XmlRootElement(name = "jobs")
 public class PrintJobsXmlRequest {
 
+    @Size(min = 1, message = "Require at least one job!")
+    @NotNull(message = "Require at least one job!")
+    @Valid
     private List<PrintJob> jobs;
 
     public List<PrintJob> getJobs() {
         return jobs;
     }
 
-    @XmlElements({@XmlElement(name = "job", type = PrintJob.class)})
+    @XmlElements({@XmlElement(name = "job", type = PrintJob.class, required = true)})
     public void setJobs(List<PrintJob> jobs) {
         this.jobs = jobs;
     }
 
     public static class PrintJob {
 
+        @NotNull(message = "Id is required!")
         private Integer id;
-
+        @NotNull(message = "Type is required!")
         private PrintType type;
+        @NotNull(message = "User is required!")
         private String user;
+        @NotNull(message = "Device is required!")
         private String device;
+        @NotNull(message = "Amount is required!")
         private Integer amount;
 
         public Integer getId() {
             return id;
         }
 
-        @XmlAttribute
+        @XmlAttribute(required = true)
         public void setId(Integer id) {
             this.id = id;
         }
@@ -44,7 +54,7 @@ public class PrintJobsXmlRequest {
             return type;
         }
 
-        @XmlElement
+        @XmlElement(required = true)
         public void setType(PrintType type) {
             this.type = type;
         }
@@ -53,7 +63,7 @@ public class PrintJobsXmlRequest {
             return user;
         }
 
-        @XmlElement
+        @XmlElement(required = true)
         public void setUser(String user) {
             this.user = user;
         }
@@ -62,7 +72,7 @@ public class PrintJobsXmlRequest {
             return device;
         }
 
-        @XmlElement
+        @XmlElement(required = true)
         public void setDevice(String device) {
             this.device = device;
         }
@@ -71,7 +81,7 @@ public class PrintJobsXmlRequest {
             return amount;
         }
 
-        @XmlElement
+        @XmlElement(required = true)
         public void setAmount(Integer amount) {
             this.amount = amount;
         }
