@@ -3,8 +3,9 @@ package com.cti.web;
 import com.cti.repository.PrintJobsRepository;
 import com.cti.repository.model.PrintJob;
 import com.cti.repository.model.PrintType;
-import com.cti.web.dto.PrintJobJsonResponse;
-import com.cti.web.dto.PrintJobsXmlRequest;
+import com.cti.web.dto.JobsJsonResponse;
+import com.cti.web.dto.JobsXmlRequest;
+import com.cti.web.dto.StatisticsJsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,11 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -27,15 +26,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RestController
 public class PrintJobsController {
 
+    private final PrintJobsRepository printJobsRepository;
 
     @Autowired
-    private PrintJobsRepository printJobsRepository;
+    public PrintJobsController(PrintJobsRepository printJobsRepository) {
+        this.printJobsRepository = printJobsRepository;
+    }
 
     @RequestMapping(value = "/jobs", method = POST, consumes = APPLICATION_XML_VALUE, produces = APPLICATION_JSON_VALUE)
-    public Map<String, Integer> jobs(@RequestBody @Valid PrintJobsXmlRequest printJobs) {
+    public JobsJsonResponse jobs(@RequestBody @Valid JobsXmlRequest printJobs) {
 
-        Map<String, Integer> amountByUser = new HashMap<>();
-        Date time = new Date();
+        JobsJsonResponse res = new JobsJsonResponse();
+        Date now = new Date();
 
         List<PrintJob> jobs = printJobs.getJobs().stream().map(dto -> {
             PrintJob printJob = new PrintJob();
@@ -44,18 +46,17 @@ public class PrintJobsController {
             printJob.setDevice(dto.getDevice());
             printJob.setUser(dto.getUser());
             printJob.setType(dto.getType());
-            printJob.setTime(time.getTime());
-            amountByUser.computeIfPresent(dto.getUser(), (k, v) -> v += dto.getAmount());
-            amountByUser.computeIfAbsent(dto.getUser(), k -> dto.getAmount());
-
+            printJob.setTime(now.getTime());
+            res.addAmount(dto.getUser(), dto.getAmount());
             return printJob;
-        }).collect(Collectors.toList());
+        }).collect(toList());
+
         printJobsRepository.save(jobs);
-        return amountByUser;
+        return res;
     }
 
     @RequestMapping(value = "/statistics", method = GET, produces = APPLICATION_JSON_VALUE)
-    public List<PrintJobJsonResponse> statistics(
+    public List<StatisticsJsonResponse> statistics(
             String user,
             PrintType type,
             String device,
@@ -65,7 +66,7 @@ public class PrintJobsController {
         List<PrintJob> res = printJobsRepository.find(user, type, device, timeFrom, timeTo);
 
         return res.stream().map(job -> {
-            PrintJobJsonResponse dto = new PrintJobJsonResponse();
+            StatisticsJsonResponse dto = new StatisticsJsonResponse();
             dto.setTime(job.getTimeAsDate());
             dto.setType(job.getType());
             dto.setUser(job.getUser());
@@ -73,7 +74,7 @@ public class PrintJobsController {
             dto.setJobId(job.getJobId());
             dto.setAmount(job.getAmount());
             return dto;
-        }).collect(Collectors.toList());
+        }).collect(toList());
 
     }
 

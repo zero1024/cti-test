@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
-public class PrintJobJsonResponse {
+public class StatisticsJsonResponse {
 
     private Integer jobId;
     private String device;

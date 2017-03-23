@@ -11,44 +11,76 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 
 @ControllerAdvice
 class ExceptionHandlingController {
 
+    /**
+     * Базовая ошибка
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Map<String, List<String>> handleInternalServerError() {
-        return singletonMap("messages", singletonList("Internal server error"));
+    public ErrorDto handleInternalServerError() {
+        return ErrorDto.create("Internal server error");
     }
 
+    /**
+     * Проблемы сохранения в базу данных
+     */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(RepositoryConstraintException.class)
     @ResponseBody
-    public Map<String, List<String>> handleConflict(RepositoryConstraintException e) {
-        return singletonMap("messages", singletonList(e.getMessage()));
+    public ErrorDto handleConflict(RepositoryConstraintException e) {
+        return ErrorDto.create(e.getMessage());
     }
 
+    /**
+     * Ошибки валидации RequestBody
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public Map<String, List<String>> handleBadRequest(MethodArgumentNotValidException e) {
-        return singletonMap("messages", e.getBindingResult().getFieldErrors()
+    public ErrorDto handleBadRequest(MethodArgumentNotValidException e) {
+        return ErrorDto.create(e.getBindingResult().getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage)
-                .collect(Collectors.toList()));
+                .collect(toList()));
 
     }
 
+    /**
+     * Spring не в состоянии распарсить RequestBody
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseBody
-    public Map<String, List<String>> handleBadRequest2(HttpMessageNotReadableException e) {
-        return singletonMap("messages", singletonList("Bad request"));
+    public ErrorDto handleBadRequest2(HttpMessageNotReadableException e) {
+        return ErrorDto.create("Bad request");
     }
+
+    public static class ErrorDto {
+
+        private final List<String> messages;
+
+        public static ErrorDto create(String msg) {
+            return new ErrorDto(singletonList(msg));
+        }
+
+        public static ErrorDto create(List<String> messages) {
+            return new ErrorDto(messages);
+        }
+
+        private ErrorDto(List<String> messages) {
+            this.messages = messages;
+        }
+
+        public List<String> getMessages() {
+            return messages;
+        }
+    }
+
 }

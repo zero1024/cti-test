@@ -16,6 +16,7 @@ public class Runner {
         SpringApplication.run(Runner.class, args);
     }
 
+    //таймозона по умолчанию jackson не совпадает с таймозоной по умолчанию виртуальной машины
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         MappingJackson2HttpMessageConverter res = new MappingJackson2HttpMessageConverter();

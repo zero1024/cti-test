@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 @XmlRootElement(name = "jobs")
-public class PrintJobsXmlRequest {
+public class JobsXmlRequest {
 
     @Size(min = 1, message = "Require at least one job!")
     @NotNull(message = "Require at least one job!")
