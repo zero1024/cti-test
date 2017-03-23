@@ -23,7 +23,7 @@ import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-//2. меньше одной джобы 3. некорректный запрос 4. логи
+
 @RestController
 public class PrintJobsController {
 

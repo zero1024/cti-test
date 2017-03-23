@@ -23,7 +23,7 @@ public class PrintJobsXmlRequest {
         return jobs;
     }
 
-    @XmlElements({@XmlElement(name = "job", type = PrintJob.class, required = true)})
+    @XmlElements({@XmlElement(name = "job", type = PrintJob.class)})
     public void setJobs(List<PrintJob> jobs) {
         this.jobs = jobs;
     }
@@ -45,7 +45,7 @@ public class PrintJobsXmlRequest {
             return id;
         }
 
-        @XmlAttribute(required = true)
+        @XmlAttribute
         public void setId(Integer id) {
             this.id = id;
         }
@@ -54,7 +54,7 @@ public class PrintJobsXmlRequest {
             return type;
         }
 
-        @XmlElement(required = true)
+        @XmlElement
         public void setType(PrintType type) {
             this.type = type;
         }
@@ -63,7 +63,7 @@ public class PrintJobsXmlRequest {
             return user;
         }
 
-        @XmlElement(required = true)
+        @XmlElement
         public void setUser(String user) {
             this.user = user;
         }
@@ -72,7 +72,7 @@ public class PrintJobsXmlRequest {
             return device;
         }
 
-        @XmlElement(required = true)
+        @XmlElement
         public void setDevice(String device) {
             this.device = device;
         }
@@ -81,7 +81,7 @@ public class PrintJobsXmlRequest {
             return amount;
         }
 
-        @XmlElement(required = true)
+        @XmlElement
         public void setAmount(Integer amount) {
             this.amount = amount;
         }

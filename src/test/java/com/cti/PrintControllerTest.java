@@ -129,7 +129,7 @@ public class PrintControllerTest {
                 new HttpEntity<>(content("uniqueTest2.xml"), headers),
                 Map.class);
         assert res1.getStatusCodeValue() == 409;
-        assert res1.getBody().get("message").equals("Job with jobId=5 and device=device1 already exists");
+        assert res1.getBody().get("messages").equals(singletonList("Job with jobId=5 and device=device1 already exists"));
 
         //3. проверяем что данные из uniqueTest2.xml не записались
         ResponseEntity<List> res2 = restTemplate.getForEntity("/statistics", List.class);
@@ -140,25 +140,29 @@ public class PrintControllerTest {
 
     @Test
     public void badRequestTest() throws Exception {
+        //1. пустой запрос
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         ResponseEntity<Map> res1 = restTemplate.exchange("/jobs", POST,
-                new HttpEntity<>(content("badRequestTest1.xml"), headers),
+                new HttpEntity<>(content("badRequestEmpty.xml"), headers),
                 Map.class);
         assert res1.getStatusCodeValue() == 400;
         assert res1.getBody().get("messages").equals(singletonList("Require at least one job!"));
 
-
+        //2. нету полей
         res1 = restTemplate.exchange("/jobs", POST,
-                new HttpEntity<>(content("badRequestTest2.xml"), headers),
+                new HttpEntity<>(content("badRequestNoFields.xml"), headers),
                 Map.class);
         assert res1.getStatusCodeValue() == 400;
-        assert res1.getBody().get("messages").equals(asList("Type is required!", "User is required!"));
+        assert new HashSet<>((Collection<String>) res1.getBody().get("messages"))
+                .equals(new HashSet<>(asList("Type is required!", "User is required!", "Id is required!")));
 
+        //3. корневой элемент не jobs
         res1 = restTemplate.exchange("/jobs", POST,
-                new HttpEntity<>(content("badRequestTest3.xml"), headers),
+                new HttpEntity<>(content("badRequestIncorrectRoot.xml"), headers),
                 Map.class);
         assert res1.getStatusCodeValue() == 400;
+        assert res1.getBody().get("messages").equals(singletonList("Bad request"));
     }
 
     //удаляем секунды
