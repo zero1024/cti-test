@@ -43,16 +43,12 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
                 throw e;
             }
         }
-
     }
 
     @Override
     public List<PrintJob> find(String user, PrintType type, String device, Date timeFrom, Date timeTo) {
-
-        CriteriaQuery<PrintJob> query = createQuery(user, type, device, timeFrom, timeTo);
-
+        CriteriaQuery<PrintJob> query = buildQuery(user, type, device, timeFrom, timeTo);
         return em.createQuery(query).getResultList();
-
     }
 
     private static void checkForConstraintsViolations(PrintJob job, PersistenceException e) {
@@ -64,17 +60,18 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
     }
 
 
-    private CriteriaQuery<PrintJob> createQuery(
+    private CriteriaQuery<PrintJob> buildQuery(
             String user,
             PrintType type,
             String device,
             Date timeFrom,
             Date timeTo) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
 
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<PrintJob> q = cb.createQuery(PrintJob.class);
         Root<PrintJob> root = q.from(PrintJob.class);
 
+        //филььры
         List<Predicate> filters = new ArrayList<>();
         if (user != null) {
             filters.add(cb.equal(root.get("user"), user));
@@ -91,7 +88,6 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
         if (timeTo != null) {
             filters.add(cb.lessThan(root.get("time"), timeTo.getTime()));
         }
-
         q.where(filters.toArray(new Predicate[filters.size()]));
 
         return q;

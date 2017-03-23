@@ -29,7 +29,7 @@ class ExceptionHandlingController {
     }
 
     /**
-     * Проблемы сохранения в базу данных
+     * Нарушения консистентности базы
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(RepositoryConstraintException.class)

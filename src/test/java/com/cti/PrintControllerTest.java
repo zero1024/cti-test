@@ -57,7 +57,7 @@ public class PrintControllerTest {
         assert res1.getBody().size() == 1;
         assert res1.getBody().get("user1").equals(7);
 
-        //3. без фильтров
+        //3.запрос без фильтров
         ResponseEntity<List> res2 = restTemplate.getForEntity("/statistics", List.class);
         assert res2.getStatusCodeValue() == 200;
         assert res2.getBody().size() == 4;
@@ -124,6 +124,7 @@ public class PrintControllerTest {
                 new HttpEntity<>(content("uniqueTest1.xml"), headers),
                 Map.class);
         assert res1.getStatusCodeValue() == 200;
+
         //2. нарушаем constraint
         res1 = restTemplate.exchange("/jobs", POST,
                 new HttpEntity<>(content("uniqueTest2.xml"), headers),
@@ -165,7 +166,7 @@ public class PrintControllerTest {
         assert res1.getBody().get("messages").equals(singletonList("Bad request"));
     }
 
-    //удаляем секунды
+    //время без секунд
     private static Date nowWithoutSeconds() throws ParseException {
         return DATE_FORMAT.parse(DATE_FORMAT.format(new Date()));
     }
