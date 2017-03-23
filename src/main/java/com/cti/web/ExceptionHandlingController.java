@@ -58,7 +58,7 @@ class ExceptionHandlingController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseBody
-    public ErrorDto handleBadRequest2(HttpMessageNotReadableException e) {
+    public ErrorDto handleParseError(HttpMessageNotReadableException e) {
         return ErrorDto.create("Bad request");
     }
 

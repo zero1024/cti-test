@@ -130,7 +130,7 @@ public class PrintControllerTest {
                 new HttpEntity<>(content("uniqueTest2.xml"), headers),
                 Map.class);
         assert res1.getStatusCodeValue() == 409;
-        assert res1.getBody().get("messages").equals(singletonList("Job with jobId=5 and device=device1 already exists"));
+        assert res1.getBody().get("messages").equals(singletonList("Job with jobId [5] and device [device1] already exists"));
 
         //3. проверяем что данные из uniqueTest2.xml не записались
         ResponseEntity<List> res2 = restTemplate.getForEntity("/statistics", List.class);

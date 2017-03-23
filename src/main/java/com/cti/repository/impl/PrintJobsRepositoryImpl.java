@@ -54,7 +54,7 @@ public class PrintJobsRepositoryImpl implements PrintJobsRepository {
     private static void checkForConstraintsViolations(PrintJob job, PersistenceException e) {
         if (e.getCause() instanceof ConstraintViolationException) {
             if (((ConstraintViolationException) e.getCause()).getConstraintName().contains("JOB_AND_DEVICE_CONSTRAINT")) {
-                throw new RepositoryConstraintException(format("Job with jobId=%s and device=%s already exists", job.getJobId(), job.getDevice()));
+                throw new RepositoryConstraintException(format("Job with jobId [%s] and device [%s] already exists", job.getJobId(), job.getDevice()));
             }
         }
     }

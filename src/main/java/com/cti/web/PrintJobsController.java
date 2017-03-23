@@ -61,8 +61,8 @@ public class PrintJobsController {
             PrintType type,
             String device,
             @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm") Date timeFrom,
-            @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm") Date timeTo
-    ) {
+            @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm") Date timeTo) {
+
         List<PrintJob> res = printJobsRepository.find(user, type, device, timeFrom, timeTo);
 
         return res.stream().map(job -> {
