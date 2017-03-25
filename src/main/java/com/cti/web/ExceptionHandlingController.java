@@ -18,15 +18,6 @@ import static java.util.stream.Collectors.toList;
 @ControllerAdvice
 class ExceptionHandlingController {
 
-    /**
-     * Базовая ошибка
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    @ResponseBody
-    public ErrorDto handleInternalServerError() {
-        return ErrorDto.create("Internal server error");
-    }
 
     /**
      * Нарушения консистентности базы
